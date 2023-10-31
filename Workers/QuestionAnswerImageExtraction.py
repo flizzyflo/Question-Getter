@@ -11,21 +11,21 @@ class QuestionAnswerImageExtractor:
     Class is used to manage the whole question, answer and image scraping from the respective webpage. 
     """
 
-    def __init__(self, *, selection_divs: ResultSet, correct_answers_divs: ResultSet, image_storage_path: Path) -> None:
+    def __init__(self, *, question_divs: ResultSet, correct_answers_divs: ResultSet, image_storage_path: Path) -> None:
 
         self._image_storage_path: Path = image_storage_path
         self._unique_question_codes: list[str] = list()
         self._questions: list[str] = list()
         self._correct_answers: list[str] = list()
         self._results: dict[str, str] = dict()
-        self._selection_divs: ResultSet = selection_divs
+        self._question_divs: ResultSet = question_divs
         self._correct_answers_divs: ResultSet = correct_answers_divs
     
     def get_image_storage_path(self) -> Path:
         return self._image_storage_path
     
-    def get_selection_divs(self) -> ResultSet:
-        return self._selection_divs
+    def get_question_divs(self) -> ResultSet:
+        return self._question_divs
     
     def get_correct_answers_divs(self) -> ResultSet:
         return self._correct_answers_divs
@@ -74,7 +74,7 @@ class QuestionAnswerImageExtractor:
         as well as mapping the images to the questions as well.
         """
         selection_div: Tag
-        for selection_div in self.get_selection_divs():
+        for selection_div in self.get_question_divs():
             unique_question_code: str = selection_div.find("div", {"class": "qtext"}).find("small").text
             self._unique_question_codes.append(unique_question_code)
 
@@ -97,7 +97,7 @@ class QuestionAnswerImageExtractor:
         selection_div: ResultSet
         questions: list[str] = list()
 
-        for selection_div in self.get_selection_divs():
+        for selection_div in self.get_question_divs():
             question_text: str = selection_div.text
             irrelevant_intro_text: int = re.match(pattern=re_pattern, 
                                                   string=question_text).span()[1] # grab lenght of the text to be eliminated
@@ -152,6 +152,9 @@ class QuestionAnswerImageExtractor:
         results dictionary of the respective class instance.
 
         """
+
+        assert self._question_divs is not None
+        assert self._correct_answers_divs is not None
 
         self.__extract_unique_question_codes()
         self.__extract_questions()

@@ -14,6 +14,8 @@ def write_results_to_file(result: dict[str, str], file: Path) -> None:
     """
 
     first_row: list[str] = None
+
+    # need to add headers for initial file creation
     if not file.exists():
         first_row = (["question_code", "question", "answer"])
 
@@ -24,17 +26,15 @@ def write_results_to_file(result: dict[str, str], file: Path) -> None:
         if first_row:
              f.writerow(first_row)
 
-        for question_code, question_answer in result.items():
-                try:
-                    question, answer = question_answer.split(DELIMITER)
-                    row = [question_code, question, answer]
-                    f.writerow(row)
-                except ValueError as ve:
-                    print(len(question_answer.split(DELIMITER)))
+        for unique_question_code, question_and_answer in result.items():
+            question, answer = question_and_answer.split(DELIMITER)
+            row_for_file = [unique_question_code, question, answer]
+            f.writerow(row_for_file)
 
 
 
-def remove_duplicates(new_results: dict[str, str], file: Path) -> dict[str, str]:
+
+def filter_duplicates_from_results(new_results: dict[str, str], file: Path) -> dict[str, str]:
     """
     Checks for duplicates in the new results, meaning if the respective question codes are already stored
     within the csv file. If yes, these questions were not transfered into the return dictionary.

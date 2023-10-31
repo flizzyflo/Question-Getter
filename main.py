@@ -3,7 +3,7 @@ import requests, os
 from bs4 import BeautifulSoup, ResultSet
 
 from Workers.QuestionAnswerImageExtraction import QuestionAnswerImageExtractor
-from Workers.FileWriting import write_results_to_file, remove_duplicates
+from Workers.FileWriting import write_results_to_file, filter_duplicates_from_results
 from Settings.Settings import URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH,  KE_1_attempts, KE_2_attempts
 
 
@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     attempts: list[str]
     correct_answer_divs: ResultSet
-    selection_divs: ResultSet
+    question_divs: ResultSet
     response: requests.Response
     extractor: QuestionAnswerImageExtractor
     raw_result: dict[str, str]
@@ -45,13 +45,13 @@ if __name__ == "__main__":
             print(f"Could not connecto to {URL} for attempt {attempt} - request is aborted. HTTP Answer-Statuscode: {response.status_code}")
             continue
 
-        selection_divs, correct_answer_divs = get_relevant_html()
-        extractor = QuestionAnswerImageExtractor(selection_divs=selection_divs,
+        question_divs, correct_answer_divs = get_relevant_html()
+        extractor = QuestionAnswerImageExtractor(question_divs=question_divs,
                                                  correct_answers_divs=correct_answer_divs,
                                                  image_storage_path=IMAGE_FILE_PATH)
         extractor.generate_results()  
         raw_result = extractor.get_results()
-        clean_results = remove_duplicates(new_results=raw_result, 
+        clean_results = filter_duplicates_from_results(new_results=raw_result, 
                                           file=CSV_FILE_PATH)
 
         write_results_to_file(result=clean_results, 

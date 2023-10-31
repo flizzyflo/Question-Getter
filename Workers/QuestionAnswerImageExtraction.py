@@ -21,12 +21,15 @@ class QuestionAnswerImageExtractor:
         self._question_divs: ResultSet = question_divs
         self._correct_answers_divs: ResultSet = correct_answers_divs
     
+
     def get_image_storage_path(self) -> Path:
         return self._image_storage_path
     
+
     def get_question_divs(self) -> ResultSet:
         return self._question_divs
     
+
     def get_correct_answers_divs(self) -> ResultSet:
         return self._correct_answers_divs
 
@@ -77,7 +80,6 @@ class QuestionAnswerImageExtractor:
         for selection_div in self.get_question_divs():
             unique_question_code: str = selection_div.find("div", {"class": "qtext"}).find("small").text
             self._unique_question_codes.append(unique_question_code)
-
 
 
     def __extract_questions(self) -> None:
@@ -153,8 +155,8 @@ class QuestionAnswerImageExtractor:
 
         """
 
-        assert self._question_divs is not None
-        assert self._correct_answers_divs is not None
+        assert isinstance(self._question_divs, ResultSet)
+        assert isinstance(self._correct_answers_divs, ResultSet)
 
         self.__extract_unique_question_codes()
         self.__extract_questions()

@@ -15,5 +15,6 @@ I am using several things within this project:
 <br>-Beautifulsoup to seach the html content
 <br>-Path and os for storing data
 <br>-csv for creating a import-csv file
+<br>-pandas for checking duplicates in csv files
 
 

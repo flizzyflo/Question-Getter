@@ -58,4 +58,4 @@ if __name__ == "__main__":
                               file=CSV_FILE_PATH)
         
     print("-" * 20)
-    print(f"Extraction of questions for '{COURSE_NUMBER}' are done. All detected images are saved as well.")
+    print(f"Extractions for '{COURSE_NUMBER}' are done. All detected images are saved as well.")

@@ -35,22 +35,35 @@ def write_results_to_file(result: dict[str, str], file: Path) -> None:
 
 
 def remove_duplicates(new_results: dict[str, str], file: Path) -> dict[str, str]:
+    """
+    Checks for duplicates in the new results, meaning if the respective question codes are already stored
+    within the csv file. If yes, these questions were not transfered into the return dictionary.
 
-    # file does not exist. no duplicates can be checked
+    Args:
+        new_results (dict[str, str]): Results as a dictionary, having the unique question code as key and the question-answer, separated by a delimiter, as value
+        file (Path): Path to the already existing csv file to check for duplicates.
+
+    Returns:
+        dict[str, str]: Filtered results dictionary without the questions already stored within the csv file.
+    """
+
+    # file does not exist. no duplicates exists since there is no file. new_results are first results
     if not file.exists():
          return new_results
 
-
     # file exists
     with open(file, "r") as f:
-        stored_questions_from_file: pd.DataFrame = pd.read_csv(f, sep=DELIMITER)
+        questions_from_file: pd.DataFrame = pd.read_csv(filepath_or_buffer=f, 
+                                                        sep=DELIMITER)
 
-    res_without_duplicates = dict()
+    filtered_results: dict[str, str] = dict()
     
-    for question_code, question_answer in new_results.items():
-        if question_code in list(stored_questions_from_file["question_code"]):
+    for unique_question_code, question_and_answer in new_results.items():
+
+        # skip question code, since already within file.
+        if unique_question_code in list(questions_from_file["question_code"]):
             continue
 
-        res_without_duplicates[question_code] = question_answer
+        filtered_results[unique_question_code] = question_and_answer
 
-    return res_without_duplicates
+    return filtered_results

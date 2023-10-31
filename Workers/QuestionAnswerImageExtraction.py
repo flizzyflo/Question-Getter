@@ -56,6 +56,14 @@ class QuestionAnswerImageExtractor:
 
 
     def get_results(self) -> dict[str, str]:
+        """
+        Accessor function the the final results. Results are filled by calling the generate_results() method
+        at a respective instance of this class.
+
+        Returns:
+            dict[str, str]: Key is the unique question code, value is a string containing the question and the answer to 
+            that question. Both are separated by a specific delimiter to be transfered into csv format later on.
+        """
         return self._results
 
 

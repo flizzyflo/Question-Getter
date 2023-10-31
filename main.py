@@ -6,6 +6,7 @@ from Workers.QuestionAnswerImageExtraction import QuestionAnswerImageExtractor
 from Workers.FileWriting import write_results_to_file, remove_duplicates
 from Settings.Settings import URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH,  KE_1_attempts, KE_2_attempts
 
+
 def get_relevant_html() -> tuple[ResultSet]:
     """
     Wrapper function to encapsulate the beautiful soup logic which extracts the relevant html information for the
@@ -46,9 +47,8 @@ if __name__ == "__main__":
 
         selection_divs, correct_answer_divs = get_relevant_html()
         extractor = QuestionAnswerImageExtractor(selection_divs=selection_divs,
-                                                                               correct_answers_divs=correct_answer_divs,
-                                                                               image_storage_path=IMAGE_FILE_PATH)
-
+                                                 correct_answers_divs=correct_answer_divs,
+                                                 image_storage_path=IMAGE_FILE_PATH)
         extractor.generate_results()  
         raw_result = extractor.get_results()
         clean_results = remove_duplicates(new_results=raw_result, 

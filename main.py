@@ -41,7 +41,7 @@ if __name__ == "__main__":
                                 params=PARAMS)
         
         if not response.status_code == 200:
-            print(f"Konnte für attempt {attempt} nicht zu {URL} verbinden - Abbruch. HTTP Statuscode: {response.status_code}")
+            print(f"Could not connecto to {URL} for attempt {attempt} - request is aborted. HTTP Answer-Statuscode: {response.status_code}")
             continue
 
         selection_divs, correct_answer_divs = get_relevant_html()
@@ -57,5 +57,5 @@ if __name__ == "__main__":
         write_results_to_file(result=clean_results, 
                               file=CSV_FILE_PATH)
         
-    print("- " * 10)
+    print("-" * 20)
     print(f"Extraction of questions for '{COURSE_NUMBER}' are done. All detected images are saved as well.")

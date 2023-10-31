@@ -167,7 +167,7 @@ class QuestionAnswerImageExtractor:
         unique_question_code: str = self.get_unique_question_code(index= question_code)
 
         image_element: Tag = page_element.find("img")
-        image_url: str = image_element["src"]
+        image_url: str = image_element["src"] # extract the url from the html tag
 
         # not a relevant image, no need to store and function ends here
         if not ".jpg" in image_url.lower():
@@ -179,7 +179,7 @@ class QuestionAnswerImageExtractor:
                                                    params=PARAMS)
         
         if not response.status_code == 200:
-            print(unique_question_code, "-Bild konnte nicht heruntergeladen werden. HTTP Response: ", response.status_code)
+            print(f"Could not connect to URL for image related to question '{unique_question_code}' - download aborted and nothing is stored. HTTP Answer-Statuscode: {response.status_code}")
             return
         
         unique_question_code = unique_question_code.replace(":", "_") # replace non-allowed characters for filename
@@ -188,5 +188,5 @@ class QuestionAnswerImageExtractor:
         with open(image_path, "wb") as image_file:
             image_file.write(response.content)
 
-        print("Bild zu '" + unique_question_code + "' erfolgreich geladen und gespeichert.")
+        print(f"Image for question '{unique_question_code}' loaded and stored succesfully at the desired path!")
 

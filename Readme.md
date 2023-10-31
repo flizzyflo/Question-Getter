@@ -16,5 +16,3 @@ I am using several things within this project:
 <br>-Path and os for storing data
 <br>-csv for creating a import-csv file
 <br>-pandas for checking duplicates in csv files
-
-

@@ -11,9 +11,9 @@ manually later on.
 
 ### What am I using within this project?
 I am using several things within this project:
--requests to get the html page
--Beautifulsoup to seach the html content
--Path and os for storing data
--csv for creating a import-csv file
+<br>-requests to get the html page
+<br>-Beautifulsoup to seach the html content
+<br>-Path and os for storing data
+<br>-csv for creating a import-csv file
 
 

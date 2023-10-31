@@ -1,10 +1,9 @@
-from pathlib import Path
-import requests, os
+import requests
 from bs4 import BeautifulSoup, ResultSet
 
 from Workers.QuestionAnswerImageExtraction import QuestionAnswerImageExtractor
 from Workers.FileWriting import write_results_to_file, filter_duplicates_from_results
-from Settings.Settings import URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH,  KE_1_attempts, KE_2_attempts
+from Settings.Settings import URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH, KE_1_attempts, KE_2_attempts
 
 
 def get_relevant_html() -> tuple[ResultSet]:

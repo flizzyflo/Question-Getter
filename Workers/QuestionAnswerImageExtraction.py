@@ -1,14 +1,15 @@
 import os
+import re
 import requests
 from pathlib import Path
 from bs4 import ResultSet, Tag
 from Settings.Settings import DELIMITER, COOKIES, HEADERS, PARAMS
-import re
+
 
 class QuestionAnswerImageExtractor:
 
     """
-    Class is used to manage the whole question, answer and image scraping from the respective webpage. 
+    Class is used to manage the whole question, answer and image scraping-process from the respective webpage. 
     """
 
     def __init__(self, *, question_divs: ResultSet, correct_answers_divs: ResultSet, image_storage_path: Path) -> None:
@@ -67,15 +68,16 @@ class QuestionAnswerImageExtractor:
             dict[str, str]: Key is the unique question code, value is a string containing the question and the answer to 
             that question. Both are separated by a specific delimiter to be transfered into csv format later on.
         """
+
         return self._results
 
 
     def __extract_unique_question_codes(self) -> None:
-        
         """
         Extracts all the unique question codes for every question. These codes will be used as keys for the questions to avoid duplicates
         as well as mapping the images to the questions as well.
         """
+
         selection_div: Tag
         for selection_div in self.get_question_divs():
             unique_question_code: str = selection_div.find("div", {"class": "qtext"}).find("small").text
@@ -90,14 +92,12 @@ class QuestionAnswerImageExtractor:
         Args:
             selection_divs (list[ResultSet]): Extracted result set containing all the  question divs from the website.
             Each question div contains the question itself and several other information.
-
         """
 
         # questions start with introduction text and question number. is filtered with this regex
         # format looks like [KE01:054b], whereas the last letter - b in this case - is optional
         re_pattern: str = r"(Fragetext\[[A-Z]{2}\d{2}:\d{3}[a-z]{0,1}\])"
         selection_div: ResultSet
-        questions: list[str] = list()
 
         for selection_div in self.get_question_divs():
             question_text: str = selection_div.text
@@ -114,10 +114,6 @@ class QuestionAnswerImageExtractor:
             # replace delimiter to ensure correct csv creation. replace other unnecessary text as well
             question_text = question_text.replace(DELIMITER, ":").replace("__________", "")
             self._questions.append(question_text)
-            
-
-        if question_text not in questions:
-            self._questions.append(question_text)
 
 
     def __extract_correct_answers(self) -> None: 
@@ -126,7 +122,6 @@ class QuestionAnswerImageExtractor:
 
         Args:
             correct_answer_divs (ResultSet): all divs containing the answer
-
         """
 
         for correct_anwser_div in self.get_correct_answers_divs():
@@ -140,6 +135,7 @@ class QuestionAnswerImageExtractor:
         Dictionary has the unique question codes as keys, the answers and questions are put together as a string and
         were appended to the respective key.
         """
+
         elements_to_extract: int = min(len(self.get_unique_question_codes()), len(self.get_questions()), len(self.get_correct_answers()))
         for index_position in range(elements_to_extract):
             current_question_code = self.get_unique_question_code(index_position)
@@ -152,7 +148,6 @@ class QuestionAnswerImageExtractor:
         """
         Wrapperfunction to be called to perform extraction of question codes, questions, answers, images and storing the results into the 
         results dictionary of the respective class instance.
-
         """
 
         assert isinstance(self._question_divs, ResultSet)
@@ -176,8 +171,8 @@ class QuestionAnswerImageExtractor:
         # question code is key to link the image to the question
         # relevant question code is at indexposition of the last question in the question list, since 
         # it is extracted before the current question is appended to the question list
-        question_code = (len(self.get_questions())) if len(self.get_questions()) > 0 else 0
-        unique_question_code: str = self.get_unique_question_code(index= question_code)
+        question_code: int = (len(self.get_questions())) if len(self.get_questions()) > 0 else 0
+        unique_question_code: str = self.get_unique_question_code(index=question_code)
 
         image_element: Tag = page_element.find("img")
         image_url: str = image_element["src"] # extract the url from the html tag

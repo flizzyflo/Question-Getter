@@ -1,8 +1,7 @@
 import pandas as pd
 import csv
-import os
 from pathlib import Path
-from Settings.Settings import DELIMITER, COURSE_NUMBER
+from Settings.Settings import DELIMITER
 
 
 def write_results_to_file(result: dict[str, str], file: Path) -> None:
@@ -19,8 +18,8 @@ def write_results_to_file(result: dict[str, str], file: Path) -> None:
     if not file.exists():
         first_row = (["question_code", "question", "answer"])
 
-    with open(file, "a+") as new_file:
-        f = csv.writer(new_file, 
+    with open(file, "a+") as new_csv_file:
+        f = csv.writer(new_csv_file, 
                        delimiter=DELIMITER)
 
         if first_row:
@@ -30,8 +29,6 @@ def write_results_to_file(result: dict[str, str], file: Path) -> None:
             question, answer = question_and_answer.split(DELIMITER)
             row_for_file = [unique_question_code, question, answer]
             f.writerow(row_for_file)
-
-
 
 
 def filter_duplicates_from_results(new_results: dict[str, str], file: Path) -> dict[str, str]:
@@ -52,15 +49,15 @@ def filter_duplicates_from_results(new_results: dict[str, str], file: Path) -> d
          return new_results
 
     # file exists
-    with open(file, "r") as f:
-        questions_from_file: pd.DataFrame = pd.read_csv(filepath_or_buffer=f, 
+    with open(file, "r") as csv_file:
+        questions_from_file: pd.DataFrame = pd.read_csv(filepath_or_buffer=csv_file, 
                                                         sep=DELIMITER)
 
     filtered_results: dict[str, str] = dict()
     
     for unique_question_code, question_and_answer in new_results.items():
 
-        # skip question code, since already within file.
+        # skip this question code, question and answer, since it is already stored within file.
         if unique_question_code in list(questions_from_file["question_code"]):
             continue
 

@@ -11,13 +11,24 @@ class QuestionAnswerImageExtractor:
     Class is used to manage the whole question, answer and image scraping from the respective webpage. 
     """
 
-    def __init__(self, course_number: str, image_storage_path: Path) -> None:
-        self.course_number: str = course_number
-        self.image_storage_path: Path = image_storage_path
+    def __init__(self, *, selection_divs: ResultSet, correct_answers_divs: ResultSet, image_storage_path: Path) -> None:
+
+        self._image_storage_path: Path = image_storage_path
         self._unique_question_codes: list[str] = list()
         self._questions: list[str] = list()
         self._correct_answers: list[str] = list()
         self._results: dict[str, str] = dict()
+        self._selection_divs: ResultSet = selection_divs
+        self._correct_answers_divs: ResultSet = correct_answers_divs
+    
+    def get_image_storage_path(self) -> Path:
+        return self._image_storage_path
+    
+    def get_selection_divs(self) -> ResultSet:
+        return self._selection_divs
+    
+    def get_correct_answers_divs(self) -> ResultSet:
+        return self._correct_answers_divs
 
 
     def get_unique_question_code(self, index: int) -> str:
@@ -48,20 +59,20 @@ class QuestionAnswerImageExtractor:
         return self._results
 
 
-    def extract_unique_question_codes(self, selection_divs: ResultSet) -> None:
+    def __extract_unique_question_codes(self) -> None:
         
         """
         Extracts all the unique question codes for every question. These codes will be used as keys for the questions to avoid duplicates
         as well as mapping the images to the questions as well.
         """
         selection_div: Tag
-        for selection_div in selection_divs:
+        for selection_div in self.get_selection_divs():
             unique_question_code: str = selection_div.find("div", {"class": "qtext"}).find("small").text
             self._unique_question_codes.append(unique_question_code)
 
 
 
-    def extract_questions(self, question_divs: list[ResultSet]) -> None:
+    def __extract_questions(self) -> None:
         """
         Takes in all extracted question divs and extracts the questions out of them. 
         If an image is stored within the question div, this information is passed on to a helper mehtod which  will store the image as well.
@@ -78,15 +89,17 @@ class QuestionAnswerImageExtractor:
         selection_div: ResultSet
         questions: list[str] = list()
 
-        for selection_div in question_divs:
+        for selection_div in self.get_selection_divs():
             question_text: str = selection_div.text
             irrelevant_intro_text: int = re.match(pattern=re_pattern, 
                                                   string=question_text).span()[1] # grab lenght of the text to be eliminated
             
             # question text without unnecessary leading introductary text
             question_text = question_text[irrelevant_intro_text:]
+
+            # image is within the current div, needs to be extracted
             if selection_div.find("img"):
-                self.extract_and_store_image(selection_div)
+                self.__extract_and_store_image(selection_div)
 
             # replace delimiter to ensure correct csv creation. replace other unnecessary text as well
             question_text = question_text.replace(DELIMITER, ":").replace("__________", "")
@@ -97,7 +110,7 @@ class QuestionAnswerImageExtractor:
             self._questions.append(question_text)
 
 
-    def extract_correct_answers(self, correct_answer_divs: ResultSet) -> None: 
+    def __extract_correct_answers(self) -> None: 
         """
         Extracts the correct answer from the respective answer div and stores them into a list.
 
@@ -106,12 +119,12 @@ class QuestionAnswerImageExtractor:
 
         """
 
-        for correct_anwser_div in correct_answer_divs:
+        for correct_anwser_div in self.get_correct_answers_divs():
             correct_answer = correct_anwser_div.text.split(":")[1]
             self._correct_answers.append(correct_answer)
 
 
-    def generate_results(self) -> None:
+    def __match_results(self) -> None:
         """
         Function matches the extracted questions, answers and unique question codes togehter within a dictionary.
         Dictionary has the unique question codes as keys, the answers and questions are put together as a string and
@@ -125,7 +138,20 @@ class QuestionAnswerImageExtractor:
             self._results[current_question_code] = f"{current_question}{DELIMITER} {current_answer}"
 
 
-    def extract_and_store_image(self, page_element: Tag) -> None:
+    def generate_results(self) -> None:
+        """
+        Wrapperfunction to be called to perform extraction of question codes, questions, answers, images and storing the results into the 
+        results dictionary of the respective class instance.
+
+        """
+
+        self.__extract_unique_question_codes()
+        self.__extract_questions()
+        self.__extract_correct_answers()
+        self.__match_results()    
+
+
+    def __extract_and_store_image(self, page_element: Tag) -> None:
         """
         This function takes in an html-page element, detects the image tag within. It will send an request to the 
         respective url of the image and store the image as jpg file to the harddisk. Path for storage is saved as instance variable.
@@ -157,9 +183,10 @@ class QuestionAnswerImageExtractor:
             return
         
         unique_question_code = unique_question_code.replace(":", "_") # replace non-allowed characters for filename
-        image_path: Path = Path(f"{os.path.join(self.image_storage_path, unique_question_code)}.jpg")
+        image_path: Path = Path(f"{os.path.join(self.get_image_storage_path(), unique_question_code)}.jpg")
 
         with open(image_path, "wb") as image_file:
             image_file.write(response.content)
 
         print("Bild zu '" + unique_question_code + "' erfolgreich geladen und gespeichert.")
+

@@ -4,7 +4,7 @@ from pathlib import Path
 from Settings.Settings import DELIMITER
 
 
-def write_results_to_file(result: dict[str, str], file: Path) -> None:
+def write_results_to_file(results: dict[str, str], file: Path) -> None:
     """Takes in all the extracted questions as well as results and stores them into a file.
 
     Args:
@@ -19,16 +19,16 @@ def write_results_to_file(result: dict[str, str], file: Path) -> None:
         first_row = (["question_code", "question", "answer"])
 
     with open(file, "a+") as new_csv_file:
-        f = csv.writer(new_csv_file, 
+        new_csv_file = csv.writer(new_csv_file, 
                        delimiter=DELIMITER)
 
         if first_row:
-             f.writerow(first_row)
+             new_csv_file.writerow(first_row)
 
-        for unique_question_code, question_and_answer in result.items():
+        for unique_question_code, question_and_answer in results.items():
             question, answer = question_and_answer.split(DELIMITER)
             row_for_file = [unique_question_code, question, answer]
-            f.writerow(row_for_file)
+            new_csv_file.writerow(row_for_file)
 
 
 def filter_duplicates_from_results(new_results: dict[str, str], file: Path) -> dict[str, str]:

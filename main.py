@@ -53,7 +53,7 @@ if __name__ == "__main__":
         clean_results = filter_duplicates_from_results(new_results=raw_result, 
                                           file=CSV_FILE_PATH)
 
-        write_results_to_file(result=clean_results, 
+        write_results_to_file(results=clean_results, 
                               file=CSV_FILE_PATH)
         
     print("-" * 20)

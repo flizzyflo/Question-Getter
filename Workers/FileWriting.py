@@ -18,17 +18,17 @@ def write_results_to_file(results: dict[str, str], file: Path) -> None:
     if not file.exists():
         first_row = (["question_code", "question", "answer"])
 
-    with open(file, "a+") as new_csv_file:
-        new_csv_file = csv.writer(new_csv_file, 
+    with open(file, "a+") as csv_file:
+        csv_file = csv.writer(csv_file, 
                        delimiter=DELIMITER)
 
         if first_row:
-             new_csv_file.writerow(first_row)
+             csv_file.writerow(first_row)
 
         for unique_question_code, question_and_answer in results.items():
             question, answer = question_and_answer.split(DELIMITER)
             row_for_file = [unique_question_code, question, answer]
-            new_csv_file.writerow(row_for_file)
+            csv_file.writerow(row_for_file)
 
 
 def filter_duplicates_from_results(new_results: dict[str, str], file: Path) -> dict[str, str]:

@@ -72,6 +72,21 @@ class QuestionAnswerImageExtractor:
         return self._results
 
 
+    def generate_results(self) -> None:
+            """
+            Wrapperfunction to be called to perform extraction of question codes, questions, answers, images and storing the results into the 
+            results dictionary of the respective class instance.
+            """
+
+            assert isinstance(self._question_divs, ResultSet)
+            assert isinstance(self._correct_answers_divs, ResultSet)
+
+            self.__extract_unique_question_codes()
+            self.__extract_questions()
+            self.__extract_correct_answers()
+            self.__match_results()    
+
+
     def __extract_unique_question_codes(self) -> None:
         """
         Extracts all the unique question codes for every question. These codes will be used as keys for the questions to avoid duplicates
@@ -116,49 +131,6 @@ class QuestionAnswerImageExtractor:
             self._questions.append(question_text)
 
 
-    def __extract_correct_answers(self) -> None: 
-        """
-        Extracts the correct answer from the respective answer div and stores them into a list.
-
-        Args:
-            correct_answer_divs (ResultSet): all divs containing the answer
-        """
-
-        for correct_anwser_div in self.get_correct_answers_divs():
-            correct_answer = correct_anwser_div.text.split(":")[1]
-            self._correct_answers.append(correct_answer)
-
-
-    def __match_results(self) -> None:
-        """
-        Function matches the extracted questions, answers and unique question codes togehter within a dictionary.
-        Dictionary has the unique question codes as keys, the answers and questions are put together as a string and
-        were appended to the respective key.
-        """
-
-        elements_to_extract: int = min(len(self.get_unique_question_codes()), len(self.get_questions()), len(self.get_correct_answers()))
-        for index_position in range(elements_to_extract):
-            current_question_code = self.get_unique_question_code(index_position)
-            current_question = self.get_question(index_position)
-            current_answer = self.get_correct_answer(index_position)
-            self._results[current_question_code] = f"{current_question}{DELIMITER} {current_answer}"
-
-
-    def generate_results(self) -> None:
-        """
-        Wrapperfunction to be called to perform extraction of question codes, questions, answers, images and storing the results into the 
-        results dictionary of the respective class instance.
-        """
-
-        assert isinstance(self._question_divs, ResultSet)
-        assert isinstance(self._correct_answers_divs, ResultSet)
-
-        self.__extract_unique_question_codes()
-        self.__extract_questions()
-        self.__extract_correct_answers()
-        self.__match_results()    
-
-
     def __extract_and_store_image(self, page_element: Tag) -> None:
         """
         This function takes in an html-page element, detects the image tag within. It will send an request to the 
@@ -197,4 +169,34 @@ class QuestionAnswerImageExtractor:
             image_file.write(response.content)
 
         print(f"Image for question '{unique_question_code}' loaded and stored succesfully at the desired path!")
+
+
+    def __extract_correct_answers(self) -> None: 
+        """
+        Extracts the correct answer from the respective answer div and stores them into a list.
+
+        Args:
+            correct_answer_divs (ResultSet): all divs containing the answer
+        """
+
+        for correct_anwser_div in self.get_correct_answers_divs():
+            correct_answer = correct_anwser_div.text.split(":")[1]
+            self._correct_answers.append(correct_answer)
+
+
+    def __match_results(self) -> None:
+        """
+        Function matches the extracted questions, answers and unique question codes togehter within a dictionary.
+        Dictionary has the unique question codes as keys, the answers and questions are put together as a string and
+        were appended to the respective key.
+        """
+
+        elements_to_extract: int = min(len(self.get_unique_question_codes()), len(self.get_questions()), len(self.get_correct_answers()))
+        for index_position in range(elements_to_extract):
+            current_question_code = self.get_unique_question_code(index_position)
+            current_question = self.get_question(index_position)
+            current_answer = self.get_correct_answer(index_position)
+            self._results[current_question_code] = f"{current_question}{DELIMITER} {current_answer}"
+
+
 

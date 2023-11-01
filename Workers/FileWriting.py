@@ -9,7 +9,7 @@ def write_results_to_file(results: dict[str, str], file: Path) -> None:
 
     Args:
         result (dict[str, str]): Dictionary of question-correct answer pair
-        filename (str): csv file containing the question-answer pairs
+        file (str): csv file containing the question-answer pairs
     """
 
     first_row: list[str] = None
@@ -27,8 +27,8 @@ def write_results_to_file(results: dict[str, str], file: Path) -> None:
 
         for unique_question_code, question_and_answer in results.items():
             question, answer = question_and_answer.split(DELIMITER)
-            row_for_file = [unique_question_code, question, answer]
-            csv_file.writerow(row_for_file)
+            new_row = [unique_question_code, question, answer]
+            csv_file.writerow(new_row)
 
 
 def filter_duplicates_from_results(new_results: dict[str, str], file: Path) -> dict[str, str]:

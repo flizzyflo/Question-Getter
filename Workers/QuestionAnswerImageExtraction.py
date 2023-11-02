@@ -111,12 +111,12 @@ class QuestionAnswerImageExtractor:
 
         # questions start with introduction text and question number. is filtered with this regex
         # format looks like [KE01:054b], whereas the last letter - b in this case - is optional
-        re_pattern: str = r"(Fragetext\[[A-Z]{2}\d{2}:\d{3}[a-z]{0,1}\])"
+        unique_question_code_pattern: str = r"(Fragetext\[[A-Z]{2}\d{2}:\d{3}[a-z]{0,1}\])"
         selection_div: ResultSet
-
+        unique_question_code_pattern.searc
         for selection_div in self.get_question_divs():
             question_text: str = selection_div.text
-            irrelevant_intro_text: int = re.match(pattern=re_pattern, 
+            irrelevant_intro_text: int = re.match(pattern=unique_question_code_pattern, 
                                                   string=question_text).span()[1] # grab lenght of the text to be eliminated
             
             # question text without unnecessary leading introductary text

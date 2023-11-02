@@ -1,37 +1,39 @@
-import pandas as pd
 import csv
 from pathlib import Path
 from Settings.Settings import DELIMITER
+import pandas as pd
 
 
-def write_results_to_file(results: dict[str, str], file: Path) -> None:
+def write_results_to_file(results: dict[str, str], questions_csv_file_path: Path) -> None:
     """Takes in all the extracted questions as well as results and stores them into a file.
 
     Args:
         result (dict[str, str]): Dictionary of question-correct answer pair
-        file (str): csv file containing the question-answer pairs
+        file (str): csv filepath containing the question-answer pairs
     """
 
-    first_row: list[str] = None
+    header_row: list[str] = None
 
-    # need to add headers for initial file creation
-    if not file.exists():
-        first_row = (["question_code", "question", "answer"])
+    # need to add headers when file is created initially
+    if not questions_csv_file_path.exists():
+        header_row = (["question_code", "question", "answer"])
 
-    with open(file, "a+") as csv_file:
+    # creation of the file
+    with open(questions_csv_file_path, "a+") as csv_file:
         csv_file = csv.writer(csv_file, 
                        delimiter=DELIMITER)
 
-        if first_row:
-             csv_file.writerow(first_row)
+        if header_row:
+             csv_file.writerow(header_row)
 
+        # write row by row into the file, separated by delimiter
         for unique_question_code, question_and_answer in results.items():
             question, answer = question_and_answer.split(DELIMITER)
             new_row = [unique_question_code, question, answer]
             csv_file.writerow(new_row)
 
 
-def filter_duplicates_from_results(new_results: dict[str, str], file: Path) -> dict[str, str]:
+def filter_duplicates_from_scraped_results(new_results: dict[str, str], questions_csv_file_path: Path) -> dict[str, str]:
     """
     Checks for duplicates in the new results, meaning if the respective question codes are already stored
     within the csv file. If yes, these questions were not transfered into the return dictionary.
@@ -45,11 +47,11 @@ def filter_duplicates_from_results(new_results: dict[str, str], file: Path) -> d
     """
 
     # file does not exist. no duplicates exists since there is no file. new_results are first results
-    if not file.exists():
+    if not questions_csv_file_path.exists():
          return new_results
 
     # file exists
-    with open(file, "r") as csv_file:
+    with open(questions_csv_file_path, "r") as csv_file:
         questions_from_file: pd.DataFrame = pd.read_csv(filepath_or_buffer=csv_file, 
                                                         sep=DELIMITER)
 

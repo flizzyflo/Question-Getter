@@ -14,7 +14,7 @@ class QuestionAnswerImageExtractor:
 
     def __init__(self, *, question_divs: ResultSet, correct_answers_divs: ResultSet, image_storage_path: Path) -> None:
 
-        self._image_storage_path: Path = image_storage_path
+        self._image_storage_path: Path = self.set_image_storage_part(image_storage_path)
         self._unique_question_codes: list[str] = list()
         self._questions: list[str] = list()
         self._correct_answers: list[str] = list()
@@ -22,6 +22,21 @@ class QuestionAnswerImageExtractor:
         self._question_divs: ResultSet = question_divs
         self._correct_answers_divs: ResultSet = correct_answers_divs
     
+
+    def set_image_storage_part(self, image_storage_path: Path) -> None:
+        """
+        Sets the image storage part as instance variable. Checks whether the path for the image folder already exists. 
+        If not, it will create the respective folder.
+
+        Args:
+            image_storage_path (Path): Path to a folder where the images for the respective questions should be stored later on.
+        """
+
+        if not image_storage_path.exists():
+            os.makedirs(name=image_storage_path)
+        
+        self._image_storage_path = image_storage_path
+
 
     def get_image_storage_path(self) -> Path:
         return self._image_storage_path
@@ -113,7 +128,7 @@ class QuestionAnswerImageExtractor:
         # format looks like [KE01:054b], whereas the last letter - b in this case - is optional
         unique_question_code_pattern: str = r"(Fragetext\[[A-Z]{2}\d{2}:\d{3}[a-z]{0,1}\])"
         selection_div: ResultSet
-        unique_question_code_pattern.searc
+
         for selection_div in self.get_question_divs():
             question_text: str = selection_div.text
             irrelevant_intro_text: int = re.match(pattern=unique_question_code_pattern, 

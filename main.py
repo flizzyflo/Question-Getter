@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup, ResultSet
 
 from Workers.QuestionAnswerImageExtraction import QuestionAnswerImageExtractor
-from Workers.FileWriting import write_results_to_file, filter_duplicates_from_results
+from Workers.FileWriting import write_results_to_file, filter_duplicates_from_scraped_results
 from Settings.Settings import URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH, KE_1_attempts, KE_2_attempts
 
 
@@ -50,11 +50,11 @@ if __name__ == "__main__":
                                                  image_storage_path=IMAGE_FILE_PATH)
         extractor.generate_results()  
         raw_result = extractor.get_results()
-        clean_results = filter_duplicates_from_results(new_results=raw_result, 
-                                          file=CSV_FILE_PATH)
+        clean_results = filter_duplicates_from_scraped_results(new_results=raw_result, 
+                                          questions_csv_file_path=CSV_FILE_PATH)
 
         write_results_to_file(results=clean_results, 
-                              file=CSV_FILE_PATH)
+                              questions_csv_file_path=CSV_FILE_PATH)
         
     print("-" * 20)
     print(f"Extractions for '{COURSE_NUMBER}' are done. All detected images are saved as well.")

@@ -14,7 +14,7 @@ class QuestionAnswerImageExtractor:
 
     def __init__(self, *, question_divs: ResultSet, correct_answers_divs: ResultSet, image_storage_path: Path) -> None:
 
-        self._image_storage_path: Path = self.set_image_storage_part(image_storage_path)
+        self.set_image_storage_part(image_storage_path=image_storage_path)
         self._unique_question_codes: list[str] = list()
         self._questions: list[str] = list()
         self._correct_answers: list[str] = list()
@@ -34,7 +34,7 @@ class QuestionAnswerImageExtractor:
 
         if not image_storage_path.exists():
             os.makedirs(name=image_storage_path)
-        
+
         self._image_storage_path = image_storage_path
 
 
@@ -114,7 +114,7 @@ class QuestionAnswerImageExtractor:
             self._unique_question_codes.append(unique_question_code)
 
 
-    def __extract_questions(self) -> None:
+    def __extract_questions(self, html_element_to_download: str = "img") -> None:
         """
         Takes in all extracted question divs and extracts the questions out of them. 
         If an image is stored within the question div, this information is passed on to a helper mehtod which  will store the image as well.
@@ -122,23 +122,24 @@ class QuestionAnswerImageExtractor:
         Args:
             selection_divs (list[ResultSet]): Extracted result set containing all the  question divs from the website.
             Each question div contains the question itself and several other information.
+            html_element_to_download (str): Element to look for which should be downloaded
         """
 
         # questions start with introduction text and question number. is filtered with this regex
         # format looks like [KE01:054b], whereas the last letter - b in this case - is optional
-        unique_question_code_pattern: str = r"(Fragetext\[[A-Z]{2}\d{2}:\d{3}[a-z]{0,1}\])"
         selection_div: ResultSet
+        unique_question_code_pattern: str = r"(Fragetext\[[A-Z]{2}\d{2}:\d{3}[a-z]{0,1}\])"
 
         for selection_div in self.get_question_divs():
             question_text: str = selection_div.text
             irrelevant_intro_text: int = re.match(pattern=unique_question_code_pattern, 
                                                   string=question_text).span()[1] # grab lenght of the text to be eliminated
             
-            # question text without unnecessary leading introductary text
+            # question text with  unnecessary leading introductary text removed
             question_text = question_text[irrelevant_intro_text:]
 
             # image is within the current div, needs to be extracted
-            if selection_div.find("img"):
+            if selection_div.find(html_element_to_download):
                 self.__extract_and_store_image(selection_div)
 
             # replace delimiter to ensure correct csv creation. replace other unnecessary text as well
@@ -155,35 +156,91 @@ class QuestionAnswerImageExtractor:
             page_element (Tag): Page element containing an image. 
         """
 
-        # question code is key to link the image to the question
-        # relevant question code is at indexposition of the last question in the question list, since 
-        # it is extracted before the current question is appended to the question list
-        question_code: int = (len(self.get_questions())) if len(self.get_questions()) > 0 else 0
-        unique_question_code: str = self.get_unique_question_code(index=question_code)
-
-        image_element: Tag = page_element.find("img")
-        image_url: str = image_element["src"] # extract the url from the html tag
+        unique_question_code_for_image_name: str = self.__get_relevant_question_code_for_image()
+        image_url: str = self.__extract_url_from(page_element=page_element) # extract the url from the html tag
 
         # not a relevant image, no need to store and function ends here
         if not ".jpg" in image_url.lower():
             return
         
-        response: requests.Response = requests.get(url=image_url, 
-                                                   cookies=COOKIES, 
-                                                   headers=HEADERS, 
-                                                   params=PARAMS)
+        response = self.__download_html_element(element_url=image_url, 
+                                                cookies=COOKIES, 
+                                                headers=HEADERS, 
+                                                params=PARAMS, 
+                                                current_question_name=unique_question_code_for_image_name)
         
-        if not response.status_code == 200:
-            print(f"Could not connect to URL for image related to question '{unique_question_code}' - download aborted and nothing is stored. HTTP Answer-Statuscode: {response.status_code}")
-            return
-        
-        unique_question_code = unique_question_code.replace(":", "_") # replace non-allowed characters for filename
-        image_path: Path = Path(f"{os.path.join(self.get_image_storage_path(), unique_question_code)}.jpg")
+        unique_question_code_for_image_name = unique_question_code_for_image_name.replace(":", "_") # replace non-allowed characters for filename
+        image_path: Path = Path(f"{os.path.join(self.get_image_storage_path(), unique_question_code_for_image_name)}.jpg")
 
         with open(image_path, "wb") as image_file:
             image_file.write(response.content)
 
-        print(f"Image for question '{unique_question_code}' loaded and stored succesfully at the desired path!")
+        print(f"Image for question '{unique_question_code_for_image_name}' loaded and stored succesfully at the desired path!")
+
+
+    def __get_relevant_question_code_for_image(self) -> str:
+        """
+        Question code is used to name the downloaded file. This allowes to connect the downloaded file to a specific question.
+        This function extracts the relevant question code for the specific downloaded file to be able to match
+        item and question later on.
+
+        Returns:
+            str: The unique question identifier code used as name for the downloaded file
+        """        
+
+        # relevant question code is at indexposition of the last question in the question list, since 
+        # it is extracted before the current question is appended to the question list
+        current_number_of_questions: int = len(self.get_questions())
+        question_code: int = current_number_of_questions if current_number_of_questions > 0 else 0
+        unique_question_code: str = self.get_unique_question_code(index=question_code)
+
+        return unique_question_code
+
+
+    def __extract_url_from(self, *, page_element: Tag, html_tag_type: str = "img", html_tag_attribute: str = "src") -> str:
+        """
+        Extracts the URL of a specific page element passed in as argument and returns the url as a string.
+
+        Args:
+            page_element (Tag): beautifulsoup Tag object of the specific html tag where the url should be extracted from
+            tag_type (str, optional): exact description of the html tag where the URL should be extracted from; set to 'img' per default.
+            tag_attribute (str, optional): Attribute which stores the URL within the html tag; set to 'src' per default
+
+        Returns:
+            str: URL stored at the given @tag_attribute within the html element
+        """      
+
+        html_tag: Tag = page_element.find(html_tag_type)
+        extracted_url: str = html_tag[html_tag_attribute] # grabs the URL from the tag_attribute
+
+        return extracted_url
+    
+
+    def __download_html_element(self, *, element_url: str, cookies: dict[str, str], headers: dict[str, str], params: dict[str, str], current_question_name: str) -> requests.Response:
+        """
+        Downloads and stores a specific element as a response object. 
+
+        Args:
+            element_url (str): URL of the element to be downloaded
+            cookies (dict[str, str]): required cookies to access the URL where the element is stored at
+            headers (dict[str, str]): required headers to access the URL where the element is stored at
+            params (dict[str, str]): required other parameters to access the URL where the element is stored at
+            current_question_name (str): unique question code where the element belongs to. Is just used to print a failure if response != 200 
+
+        Returns:
+            requests.Response: downloaded element from URL given as requests.Response object
+        """        
+        
+        response: requests.Response = requests.get(url=element_url, 
+                                                   cookies=cookies, 
+                                                   headers=headers, 
+                                                   params=params)
+        
+        if not response.status_code == 200:
+            print(f"Could not connect to URL for image related to question '{current_question_name}' - download aborted and nothing is stored. HTTP Answer-Statuscode: {response.status_code}")
+            return
+
+        return response
 
 
     def __extract_correct_answers(self) -> None: 

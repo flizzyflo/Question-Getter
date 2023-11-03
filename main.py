@@ -43,15 +43,16 @@ if __name__ == "__main__":
         if not response.status_code == 200:
             print(f"Could not connecto to {URL} for attempt {attempt} - request is aborted. HTTP Answer-Statuscode: {response.status_code}")
             continue
-
+        
         question_divs, correct_answer_divs = get_relevant_html()
         extractor = QuestionAnswerImageExtractor(question_divs=question_divs,
                                                  correct_answers_divs=correct_answer_divs,
                                                  image_storage_path=IMAGE_FILE_PATH)
+
         extractor.generate_results()  
         raw_result = extractor.get_results()
         clean_results = filter_duplicates_from_scraped_results(new_results=raw_result, 
-                                          questions_csv_file_path=CSV_FILE_PATH)
+                                                               questions_csv_file_path=CSV_FILE_PATH)
 
         write_results_to_file(results=clean_results, 
                               questions_csv_file_path=CSV_FILE_PATH)

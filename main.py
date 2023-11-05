@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup, ResultSet
 
 from Workers.QuestionAnswerImageExtraction import QuestionAnswerImageExtractor
 from Workers.FileWriting import write_results_to_file, filter_duplicates_from_scraped_results
-from Settings.Settings import URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH, KE_1_attempts, KE_2_attempts
+from Settings.Settings import COURSES, URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH
 
 
 def get_relevant_html() -> tuple[ResultSet]:
@@ -15,6 +15,7 @@ def get_relevant_html() -> tuple[ResultSet]:
         tuple[ResultSet]: Returning a tuple of bs4.Result sets. First element in tuple is the selection div result set,
         which contains all the question related information. Second element are the correct answers for the respective question.
     """
+
     soup: BeautifulSoup = BeautifulSoup(response.content, 'html.parser')
     selection_divs: ResultSet = soup.find_all("div", {"class": "formulation clearfix" })
     correct_answer_divs: ResultSet = soup.find_all("div", {"class": "rightanswer"})
@@ -31,8 +32,8 @@ if __name__ == "__main__":
     extractor: QuestionAnswerImageExtractor
     raw_result: dict[str, str]
     clean_results: dict[str, str]
-
-    attempts = KE_1_attempts
+    
+    attempts = COURSES[COURSE_NUMBER]
     for attempt in attempts:
         PARAMS['attempt'] = attempt
         response = requests.get(URL, 

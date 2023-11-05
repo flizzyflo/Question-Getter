@@ -159,8 +159,9 @@ class QuestionAnswerImageExtractor:
         unique_question_code_for_image_name: str = self.__get_relevant_question_code_for_image()
         image_url: str = self.__extract_url_from(page_element=page_element) # extract the url from the html tag
 
+        
         # not a relevant image, no need to store and function ends here
-        if not ".jpg" in image_url.lower():
+        if not ".jpg" in image_url.lower() and not ".png" in image_url.lower():
             return
         
         response = self.__download_html_element(element_url=image_url, 

@@ -1,8 +1,8 @@
 import requests
 from bs4 import BeautifulSoup, ResultSet
 
-from Workers.QuestionAnswerImageExtraction import QuestionAnswerImageExtractor
-from Workers.FileWriting import write_results_to_file, filter_duplicates_from_scraped_results
+from Workers.QuestionAnswerImageExtractor import QuestionAnswerImageExtractor
+from Workers.FileWriting import FileHandler
 from Settings.Settings import COURSES, URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH
 
 
@@ -52,11 +52,15 @@ if __name__ == "__main__":
 
         extractor.generate_results()  
         raw_result = extractor.get_results()
-        clean_results = filter_duplicates_from_scraped_results(new_results=raw_result, 
-                                                               questions_csv_file_path=CSV_FILE_PATH)
 
-        write_results_to_file(results=clean_results, 
-                              questions_csv_file_path=CSV_FILE_PATH)
+        FileHandler.store_results(results=raw_result, 
+                                  questions_csv_file_path=CSV_FILE_PATH)
+
+        #clean_results = filter_duplicates_from_scraped_results(results=raw_result, 
+        #                                                       questions_csv_file_path=CSV_FILE_PATH)
+
+        #create_result_file(results=clean_results, 
+        #                      questions_csv_file_path=CSV_FILE_PATH)
         
     print("-" * 20)
     print(f"Extractions for '{COURSE_NUMBER}' are done. All detected images are saved as well.")

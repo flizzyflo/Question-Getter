@@ -22,14 +22,14 @@ class FileHandler:
             results (dict[str, str]): Dictionary with unique question code as key and the question text as value
             questions_csv_file_path (Path): Path to store the file containing the extracted questions
         """        
-        results: dict[str, str] = FileHandler._filter_duplicates_from_scraped_results(results=results,
+        results: dict[str, str] = FileHandler.__filter_duplicates_from_scraped_results(results=results,
                                                                                       questions_csv_file_path=questions_csv_file_path)
-        FileHandler._create_result_file(results=results,
+        FileHandler.__create_result_file(results=results,
                                         questions_csv_file_path=questions_csv_file_path)
 
 
     @staticmethod
-    def _create_result_file(results: dict[str, str], questions_csv_file_path: Path) -> None:
+    def __create_result_file(results: dict[str, str], questions_csv_file_path: Path) -> None:
         """
         Takes in all the extracted questions as well as results and stores them into a file.
         If file already exists at that part, results are appended.
@@ -60,7 +60,7 @@ class FileHandler:
                 csv_file.writerow(new_row)
 
     @staticmethod
-    def _filter_duplicates_from_scraped_results(results: dict[str, str], questions_csv_file_path: Path) -> dict[str, str]:
+    def __filter_duplicates_from_scraped_results(results: dict[str, str], questions_csv_file_path: Path) -> dict[str, str]:
         """
         Checks for duplicates in the new results, meaning if the respective question codes are already stored
         within the csv file. If yes, these questions were not transfered into the return dictionary.

@@ -6,18 +6,21 @@ import pandas as pd
 
 class FileHandler:
     """
-    _summary_
+    Class to manage the files to store questions in. Contains several static methods
+    to either store the information in a file as well as checking for duplicates in 
+    already existing files.
 
     """
 
     @staticmethod
     def store_results(results: dict[str, str], questions_csv_file_path: Path) -> None:
         """
-        _summary_
+        Wrapper function to call several submethods to store the results into a file at path passed in as argument.
+        Filters duplicate questions based on results key, which is basically the question code.
 
         Args:
-            results (dict[str, str]): _description_
-            questions_csv_file_path (Path): _description_
+            results (dict[str, str]): Dictionary with unique question code as key and the question text as value
+            questions_csv_file_path (Path): Path to store the file containing the extracted questions
         """        
         results: dict[str, str] = FileHandler._filter_duplicates_from_scraped_results(results=results,
                                                                                       questions_csv_file_path=questions_csv_file_path)

@@ -1051,3 +1051,175 @@ konvergente Repräsentation
 Flächenkodierung 
 verteilte Repräsentation 
 ";  Ensemblekodierung, verteilte Repräsentation, Populationskodierung
+[KE03:106];"
+Welches Teilgebiet der Informatik widmet sich der Übertragung von Verarbeitungsprinzipien des Gehirns auf die Informationsverarbeitung in technischen Systemen?
+Wählen Sie eine Antwort:Angewandte Informatik 
+Technische Informatik 
+Theoretische Informatik 
+Neuroinformatik 
+Wirtschaftsinformatik 
+";  Neuroinformatik
+[KE03:023];"
+Welche Neurotransmitter lassen sich unterscheiden?
+Wählen Sie eine oder mehrere Antworten:perzitatorische Transmitter 
+exhibitorische Transmitter 
+inzitatorische Transmitter 
+perhibitorische Transmitter 
+exzitatorische Transmitter 
+inhibitorische Transmitter 
+";  exzitatorische Transmitter, inhibitorische Transmitter
+[KE03:042];"
+Bewerten Sie folgende Aussage: Ist diese Aussage wahr oder falsch?
+""Eine Theorie zur Lösung des Bindungsproblems von Christoph von der Malsburg basiert auf der asynchronen Oszillation der beteiligten Neuronenverbünde.""
+Wählen Sie eine Antwort:Diese Aussage ist wahr. 
+Diese Aussage ist falsch. 
+";  Diese Aussage ist falsch.
+[KE03:072];"
+Welche Region einer Nervenzelle enthält die genetische Information?
+Wählen Sie eine oder mehrere Antworten:Dendriten 
+Synapsen 
+Zellkörper 
+Axon 
+";  Zellkörper
+[KE03:059];"
+Was ist beim Menschen lediglich für das monochromatische Sehen zuständig?
+Wählen Sie eine Antwort:Stangen 
+Tännchen 
+Zapfen 
+Stäbchen 
+";  Stäbchen
+[KE03:083];"
+Was ist laterale Inhibition?
+Wählen Sie eine oder mehrere Antworten:Die Rückbildung kortikaler Synapsen 
+Die Reduktion der Signalstärke benachbarter Neuronen 
+Die Rückbildung kortikaler Milchdrüsen 
+Die Reduktion der Nährstoffaufnahme benachbarter Neuronen 
+Eine Schläfenfraktur 
+";  Die Reduktion der Signalstärke benachbarter Neuronen
+[KE03:041];"
+In welche Beziehung stehen Cornea und Fovea?
+Wählen Sie eine oder mehrere Antworten:Während die Fovea der Bereich des schärfsten Sehens ist, bezeichnet die Cornea den Bereich des peripheren Sehens. 
+Die Cornea fokussiert (zusammen mit der Linse) das Licht auf die Fovea. 
+Die Fovea kompensiert den blinden Fleck der Linse. 
+Die Fovea reflektiert das Licht über die Cornea nach außen. Dieses Licht wirft den sogenannten Lidschatten. 
+Die Cornea filtert Licht bestimmter Wellenlänge und ermöglich so das Farbsehen. 
+";  Die Cornea fokussiert (zusammen mit der Linse) das Licht auf die Fovea.
+[KE03:121];"
+Zu den erwünschten Eigenschaften von IT-Systemen, die die Prinzipien des Organic Computing umsetzen, zählen u.a. die sogenannten ""Selbst-x-Eigenschaften"". Was sind Beispiele für derartige Eigenschaften?
+Wählen Sie eine oder mehrere Antworten:selbst-lernend 
+selbst-ständig 
+selbst-optimierend 
+selbst-erklärend 
+selbst-konfigurierend 
+selbst-los 
+selbst-entsorgend 
+selbst-versorgend 
+";  selbst-konfigurierend, selbst-optimierend, selbst-lernend, selbst-erklärend
+[KE03:114];"
+Bewerten Sie folgende Aussage: Ist diese Aussage wahr oder falsch?
+""Die Leistung der Akkomodation ist theoretisch unbegrenzt.""
+Wählen Sie eine Antwort:Diese Aussage ist wahr. 
+Diese Aussage ist falsch. 
+";  Diese Aussage ist falsch.
+[KE03:039];"
+Welche der folgenden Aussagen bzgl. der Stäbchen und Zapfen sind korrekt?
+Wählen Sie eine oder mehrere Antworten:Es gibt drei Arten von Zapfen 
+Pigmente in den Zapfen sorgen für die Farbwahrnehmung 
+Es gibt drei Arten von Stäbchen 
+Pigmente in den Stäbchen sorgen für die Farbwahrnehmung 
+Zapfen sind weniger lichtempfindlich als Stäbchen 
+Stäbchen sind weniger lichtempfindlich als Zapfen 
+";  Zapfen sind weniger lichtempfindlich als Stäbchen, Es gibt drei Arten von Zapfen, Pigmente in den Zapfen sorgen für die Farbwahrnehmung
+[KE03:026];"
+Was ändert sich in einem Neuron mit der Stärke der Stimulation?
+Wählen Sie eine Antwort:Die Dauer des Aktionspotentials 
+Die Frequenz der Feuerungsrate 
+Die Spannung des Aktionspotentials 
+Die Stärke des Aktionspotentials 
+Die Länge des Aktionspotentials 
+";  Die Frequenz der Feuerungsrate
+[KE03:048];"
+Bewerten Sie folgende Aussage: Ist diese Aussage wahr oder falsch?
+""Die menschlichen Sinne erzeugen eine objektive Wahrnehmung der Umwelt.""
+Wählen Sie eine Antwort:Diese Aussage ist wahr. 
+Diese Aussage ist falsch. 
+";  Diese Aussage ist falsch.
+[KE03:013d];"
+Am synaptischen Spalt findet eine Signalübertragung zwischen Neuronen statt. Dies ist in folgender Abbildung schematisch dargestellt:
+
+
+Wie bezeichnet man das Objekt, das in der Abbildung mit D gekennzeichnet ist?
+Wählen Sie eine Antwort:Neurotransmittermolekül 
+Synaptisches Vesikel 
+Elektron des Aktionspotentials 
+postsynaptisches Neuron 
+Axon des präsynaptischen Neurons 
+";  Axon des präsynaptischen Neurons
+[KE03:017];"
+Welche der folgenden Ereignisse bewirkt Synapsenvergrößerung?
+Wählen Sie eine oder mehrere Antworten:Schmerzen 
+mit Emotionen gekoppelte Reize 
+mit angeborenen Auslösern gekoppelte Reize 
+Nachrichten im Allgemeinen 
+Tierbilder an sich 
+";  Schmerzen, mit Emotionen gekoppelte Reize, mit angeborenen Auslösern gekoppelte Reize
+[KE03:128];"
+Füllen Sie mithilfe der unten aufgeführten Lösungsvorschläge die Lücken in folgendem Text:
+
+Die  der Retina wird in Form einer  Karte auf den visuellen Kortex abgebildet, sodass benachbarte Punkte auf der Kortexoberfläche mit  Punkten auf der Retina korrespondieren.
+ Wählen Sie eine oder mehrere Antworten: Seitenfläche  
+ Oberfläche  
+ Ventralfläche  
+ Dorsalfläche
+   
+ kortikopten  
+ phänotypischen  
+ genotypischen  
+ retinotopen
+   
+ benachbarten  
+ gegenüberliegenden  
+ verschränkten  
+ antagonistischen  
+";"   Oberfläche,  retinotopen
+ ,  benachbarten"
+[KE03:066];"
+Bewerten Sie folgende Aussage: Ist diese Aussage wahr oder falsch?
+""Synapsen sind statische und unveränderliche Verbindungen zwischen Neuronen.""
+Wählen Sie eine Antwort:Diese Aussage ist wahr. 
+Diese Aussage ist falsch. 
+";  Diese Aussage ist falsch.
+[KE03:105];"
+Wie lange dauert in etwa ein Aktionspotential? (ausgehend vom Ruhemembranpotential wieder zurück zum Ruhemembranpotential)
+Wählen Sie eine Antwort:1 Nanosekunde 
+1 Mikrosekunde 
+1 Millisekunde 
+0,1 Sekunden 
+";  1 Millisekunde
+[KE03:092];"
+Welche der folgenden Effekte können zumindest teilweise durch neuronale Inhibition erklärt werden?
+Wählen Sie eine oder mehrere Antworten:Schwindel 
+Fehlsichtigkeit 
+Mach'sche Streifen 
+Hypnose 
+Simultankontrast 
+Schärfen optischer Kanten 
+Sättigungskontrast 
+";  Mach'sche Streifen, Simultankontrast, Schärfen optischer Kanten
+[KE03:024];"
+In welcher Einheit wird das Membranpotential eines Axons gemessen?
+Wählen Sie eine Antwort:Volt 
+Ampere 
+Joule 
+Watt 
+Sievert 
+";  Volt
+[KE03:004];"
+Wie heißen die Hauptinformationsströme eines visuellen Systems?
+Wählen Sie eine oder mehrere Antworten:inbibierter Strom 
+exzitatorischer Strom 
+ventraler Strom 
+averser Strom 
+dorsaler Strom 
+aktivierter Strom 
+";  dorsaler Strom, ventraler Strom

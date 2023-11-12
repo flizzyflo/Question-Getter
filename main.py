@@ -6,7 +6,7 @@ from Workers.FileWriting import FileHandler
 from Settings.Settings import COURSES, URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH
 
 
-def get_relevant_html() -> tuple[ResultSet]:
+def get_relevant_html(response: requests.Response = None) -> tuple[ResultSet]:
     """
     Wrapper function to encapsulate the beautiful soup logic which extracts the relevant html information for the
     later processing of the data.
@@ -23,13 +23,18 @@ def get_relevant_html() -> tuple[ResultSet]:
     return selection_divs, correct_answer_divs
 
 
-def extract_questions_from_attempt(attempt: int) -> None:
+def extract_questions_for(*, attempt: int) -> dict[str, str]:
     """
-    _summary_
+    Extracts all questions for a specific attempt and stores the questions into the respective file for the course unit.
+    
 
     Args:
-        attempt (int): the attemptnumber to extract the questions from
+        attempt (int): the number of the attepmt to extract the questions for
+
+    Returns:
+        dict[str, str]: Returns the raw results, having the question code as key and both, the questions and answer, als value of the dictionary.
     """    
+
     PARAMS['attempt'] = attempt
     response = requests.get(URL, 
                             cookies=COOKIES, 
@@ -40,16 +45,16 @@ def extract_questions_from_attempt(attempt: int) -> None:
         print(f"Could not connecto to {URL} for attempt {attempt} - request is aborted. HTTP Answer-Statuscode: {response.status_code}")
         return
     
-    question_divs, correct_answer_divs = get_relevant_html()
+    question_divs, correct_answer_divs = get_relevant_html(response=response)
     extractor = QuestionAnswerImageExtractor(question_divs=question_divs,
-                                                correct_answers_divs=correct_answer_divs,
-                                                image_storage_path=IMAGE_FILE_PATH)
+                                             correct_answers_divs=correct_answer_divs,
+                                             image_storage_path=IMAGE_FILE_PATH)
 
     extractor.generate_results()  
     raw_result = extractor.get_results()
 
-    FileHandler.store_results(results=raw_result, 
-                                questions_csv_file_path=CSV_FILE_PATH)
+    return raw_result
+    
 
 
 if __name__ == "__main__":
@@ -63,41 +68,15 @@ if __name__ == "__main__":
     raw_result: dict[str, str]
     clean_results: dict[str, str]
     
-    # selected course attempt
+    # selected course attempts
     attempts = COURSES[COURSE_NUMBER]
 
-    # loop through all atempts in a single course unit
+    # loop through all attempts in a single course unit
     for attempt in attempts:
-        extract_questions_from_attempt(attempt=attempt)
+        raw_result = extract_questions_for(attempt=attempt)
 
-
-    
-        # PARAMS['attempt'] = attempt
-        # response = requests.get(URL, 
-        #                         cookies=COOKIES, 
-        #                         headers=HEADERS, 
-        #                         params=PARAMS)
-        
-        # if not response.status_code == 200:
-        #     print(f"Could not connecto to {URL} for attempt {attempt} - request is aborted. HTTP Answer-Statuscode: {response.status_code}")
-        #     continue
-        
-        # question_divs, correct_answer_divs = get_relevant_html()
-        # extractor = QuestionAnswerImageExtractor(question_divs=question_divs,
-        #                                          correct_answers_divs=correct_answer_divs,
-        #                                          image_storage_path=IMAGE_FILE_PATH)
-
-        # extractor.generate_results()  
-        # raw_result = extractor.get_results()
-
-        # FileHandler.store_results(results=raw_result, 
-        #                           questions_csv_file_path=CSV_FILE_PATH)
-
-        #clean_results = filter_duplicates_from_scraped_results(results=raw_result, 
-        #                                                       questions_csv_file_path=CSV_FILE_PATH)
-
-        #create_result_file(results=clean_results, 
-        #                      questions_csv_file_path=CSV_FILE_PATH)
+        FileHandler.store_results(results=raw_result, 
+                                  questions_csv_file_path=CSV_FILE_PATH)
         
     print("-" * 20)
     print(f"Extractions for '{COURSE_NUMBER}' are done. All detected images are saved as well.")

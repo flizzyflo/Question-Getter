@@ -16,3 +16,7 @@ I am using several things within this project:
 <br>-Path and os for storing data
 <br>-csv for creating a import-csv file
 <br>-pandas for checking duplicates in csv files
+
+
+### Important side note
+Some information are stored within a separate settings file. This includes paths, delimter and several other information, which are individual and are not shared within this repo.

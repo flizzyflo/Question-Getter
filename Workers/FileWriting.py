@@ -88,8 +88,5 @@ class FileHandler:
         amount_after: int = no_duplicate_questions.shape[0]
         print(f"Dropped {amount_before - amount_after} duplicate questions.")
 
-        result_df = pd.DataFrame()
-
         # merge answer and question cols
-        result_df["Q_and_A"] = no_duplicate_questions["question"] + DELIMITER + no_duplicate_questions["answer"]
-        result_df.to_csv(questions_csv_file_path, sep=";")
+        no_duplicate_questions.to_csv(questions_csv_file_path, sep=DELIMITER)

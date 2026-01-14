@@ -22,8 +22,7 @@ class FileHandler:
             results (dict[str, str]): Dictionary with unique question code as key and the question text as value
             questions_csv_file_path (Path): Path to store the file containing the extracted questions
         """        
-        results: dict[str, str] = FileHandler.__filter_duplicates_from_scraped_results(results=results,
-                                                                                      questions_csv_file_path=questions_csv_file_path)
+
         FileHandler.__create_result_file(results=results,
                                         questions_csv_file_path=questions_csv_file_path)
 
@@ -50,46 +49,47 @@ class FileHandler:
             csv_file = csv.writer(csv_file, 
                         delimiter=DELIMITER)
 
+            # case file does not exist, nothing will be appended, but file will be created instead
             if header_row:
                 csv_file.writerow(header_row)
 
             # write row by row into the file, separated by delimiter
             for unique_question_code, question_and_answer in results.items():
                 question, answer = question_and_answer.split(DELIMITER)
-                new_row = [unique_question_code, question, answer]
+                new_row = [unique_question_code, question, answer.strip()]
                 csv_file.writerow(new_row)
 
+
+
     @staticmethod
-    def __filter_duplicates_from_scraped_results(results: dict[str, str], questions_csv_file_path: Path) -> dict[str, str]:
+    def filter_duplicates_from_stored_file(questions_csv_file_path: Path) -> None:
         """
         Checks for duplicates in the new results, meaning if the respective question codes are already stored
         within the csv file. If yes, these questions were not transfered into the return dictionary.
 
         Args:
-            new_results (dict[str, str]): Results as a dictionary, having the unique question code as key and the question-answer, separated by a delimiter, as value
-            file (Path): Path to the already existing csv file to check for duplicates.
+            questions_csv_file_path (Path): Path to the already existing csv file to check for duplicates.
 
         Returns:
             dict[str, str]: Filtered results dictionary without the questions already stored within the csv file.
         """
 
-        # file does not exist. no duplicates exists since there is no file. new_results are first results
-        if not questions_csv_file_path.exists():
-            return results
+
+        assert questions_csv_file_path.exists(), f"Path provided > {questions_csv_file_path} < does not exist"
 
         # file exists
         with open(questions_csv_file_path, "r") as csv_file:
-            questions_from_file: pd.DataFrame = pd.read_csv(filepath_or_buffer=csv_file, 
+            questions_from_file: pd.DataFrame = pd.read_csv(filepath_or_buffer=csv_file,
                                                             sep=DELIMITER)
 
-        filtered_results: dict[str, str] = dict()
-        
-        for unique_question_code, question_and_answer in results.items():
+        # for unique_question_code, question_and_answer in results.items():
+        amount_before: int = questions_from_file.shape[0]
+        no_duplicate_questions: pd.DataFrame = questions_from_file.drop_duplicates(subset=["question", "answer"])
+        amount_after: int = no_duplicate_questions.shape[0]
+        print(f"Dropped {amount_before - amount_after} duplicate questions.")
 
-            # skip this question code, question and answer, since it is already stored within file.
-            if unique_question_code in list(questions_from_file["question_code"]):
-                continue
+        result_df = pd.DataFrame()
 
-            filtered_results[unique_question_code] = question_and_answer
-
-        return filtered_results
+        # merge answer and question cols
+        result_df["Q_and_A"] = no_duplicate_questions["question"] + DELIMITER + no_duplicate_questions["answer"]
+        result_df.to_csv(questions_csv_file_path, sep=";")

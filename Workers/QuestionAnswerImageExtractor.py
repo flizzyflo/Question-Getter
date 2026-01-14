@@ -1,9 +1,12 @@
 import os
 import re
+from typing import List
+
 import requests
 from pathlib import Path
 from bs4 import ResultSet, Tag
-from Settings.Settings import DELIMITER, COOKIES, HEADERS, PARAMS
+from Settings.Settings import DELIMITER, COOKIES, HEADERS, PARAMS, QUESTION_ID
+from utils.space_scanner import find_formula_start_idx_in
 
 
 class QuestionAnswerImageExtractor:
@@ -14,7 +17,7 @@ class QuestionAnswerImageExtractor:
 
     def __init__(self, *, question_divs: ResultSet, correct_answers_divs: ResultSet, image_storage_path: Path) -> None:
 
-        self.set_image_storage_part(image_storage_path=image_storage_path)
+        # self.set_image_storage_part(image_storage_path=image_storage_path)
         self._unique_question_codes: list[str] = list()
         self._questions: list[str] = list()
         self._correct_answers: list[str] = list()
@@ -107,11 +110,18 @@ class QuestionAnswerImageExtractor:
         Extracts all the unique question codes for every question. These codes will be used as keys for the questions to avoid duplicates
         as well as mapping the images to the questions as well.
         """
-
+        global QUESTION_ID
         selection_div: Tag
+
         for selection_div in self.get_question_divs():
-            unique_question_code: str = selection_div.find("div", {"class": "qtext"}).find("small").text
-            self._unique_question_codes.append(unique_question_code)
+            #### commentend, since works different here
+            # unique_question_code: str = selection_div.find("div", {"class": "qtext"}).find("small").text
+            # self._unique_question_codes.append(unique_question_code)
+
+
+            self._unique_question_codes.append(QUESTION_ID)
+            QUESTION_ID += 1
+
 
 
     def __extract_questions(self, html_element_to_download: str = "img") -> None:
@@ -129,21 +139,43 @@ class QuestionAnswerImageExtractor:
         # format looks like [KE01:054b], whereas the last letter - b in this case - is optional
         selection_div: ResultSet
         unique_question_code_pattern: str = r"(Fragetext\[[A-Z]{2}\d{2}:\d{3}[a-z]{0,1}\])"
+        formula_contents: List[str] = list()
 
-        for selection_div in self.get_question_divs():
+        for question_number, selection_div in enumerate(self.get_question_divs(), 1):
+
             question_text: str = selection_div.text
-            irrelevant_intro_text: int = re.match(pattern=unique_question_code_pattern, 
-                                                  string=question_text).span()[1] # grab lenght of the text to be eliminated
+            q = selection_div.get_text()
+            #
+            formula_spans = selection_div.contents[2].find_all("span", class_="MathJax_Preview")
+
+            if len(formula_spans) > 0:
+                formula_contents = [sp.find("img").get("alt") for sp in formula_spans]
+
+
+            irrelevant_intro_text = len("Fragetext")
+            irrelevant_outro_text = len(f"Frage {question_number} AntwortRichtig Keine Antwort Falsch")
+            ### commentent
+            # irrelevant_intro_text: int = re.match(pattern=unique_question_code_pattern, string=question_text).span()[1] # grab lenght of the text to be eliminated
             
             # question text with  unnecessary leading introductary text removed
             question_text = question_text[irrelevant_intro_text:]
+            question_text = question_text[:len(question_text) - irrelevant_outro_text - 4]
 
+            if formula_contents:
+                formula_start_indices: List[int] = find_formula_start_idx_in(question_text)
+                former_formula_length: int = 0
+                for formula_start_idx, formula_content in zip(formula_start_indices, formula_contents):
+                    first_part_of_string = question_text[:formula_start_idx + former_formula_length].strip()
+                    second_part_of_string = question_text[formula_start_idx + former_formula_length:].lstrip()
+                    question_text = f"{first_part_of_string} {formula_content} {second_part_of_string}"
+                    former_formula_length += len(formula_content)
+                formula_contents.clear()
             # image is within the current div, needs to be extracted
-            if selection_div.find(html_element_to_download):
-                self.__extract_and_store_image(selection_div)
+          #  if selection_div.find(html_element_to_download):
+          #      self.__extract_and_store_image(selection_div)
 
             # replace delimiter to ensure correct csv creation. replace other unnecessary text as well
-            question_text = question_text.replace(DELIMITER, ":").replace("__________", "")
+            question_text = question_text.replace(DELIMITER, ":").replace("__________", "").strip()
             self._questions.append(question_text)
 
 
@@ -253,7 +285,7 @@ class QuestionAnswerImageExtractor:
         """
 
         for correct_anwser_div in self.get_correct_answers_divs():
-            correct_answer = correct_anwser_div.text.split(":")[1]
+            correct_answer = correct_anwser_div.text.split(":")[1].strip()
             self._correct_answers.append(correct_answer)
 
 

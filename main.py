@@ -1,9 +1,12 @@
+import os
+from pathlib import Path
+
 import requests
 from bs4 import BeautifulSoup, ResultSet
 
 from Workers.QuestionAnswerImageExtractor import QuestionAnswerImageExtractor
 from Workers.FileWriting import FileHandler
-from Settings.Settings import COURSES, URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH
+from Settings.Settings import COURSES, URL, COURSE_NUMBER, COOKIES, HEADERS, PARAMS, CSV_FILE_PATH, IMAGE_FILE_PATH, COURSE_NAMES
 
 
 def get_relevant_html(response: requests.Response = None) -> tuple[ResultSet]:
@@ -36,10 +39,10 @@ def extract_questions_for(*, attempt: int) -> dict[str, str]:
     """    
 
     PARAMS['attempt'] = attempt
-    response = requests.get(URL, 
-                            cookies=COOKIES, 
-                            headers=HEADERS, 
-                            params=PARAMS)
+    response = requests.get(URL,
+                             cookies=COOKIES,
+                             headers=HEADERS,
+                             params=PARAMS)
     
     if not response.status_code == 200:
         print(f"Could not connecto to {URL} for attempt {attempt} - request is aborted. HTTP Answer-Statuscode: {response.status_code}")
@@ -60,7 +63,7 @@ def extract_questions_for(*, attempt: int) -> dict[str, str]:
 if __name__ == "__main__":
 
     # variable declaration
-    attempts: list[str]
+    attempts: list[int]
     correct_answer_divs: ResultSet
     question_divs: ResultSet
     response: requests.Response
@@ -70,13 +73,17 @@ if __name__ == "__main__":
     
     # selected course attempts
     attempts = COURSES[COURSE_NUMBER]
+    FILEPATH_FOR_CSV=Path(f"results{os.sep}{COURSE_NAMES[COURSE_NUMBER]}_{CSV_FILE_PATH}")
+
 
     # loop through all attempts in a single course unit
     for attempt in attempts:
         raw_result = extract_questions_for(attempt=attempt)
 
-        FileHandler.store_results(results=raw_result, 
-                                  questions_csv_file_path=CSV_FILE_PATH)
+        FileHandler.store_results(results=raw_result,
+                                  questions_csv_file_path=FILEPATH_FOR_CSV)
+
+    FileHandler.filter_duplicates_from_stored_file(FILEPATH_FOR_CSV)
         
     print("-" * 20)
-    print(f"Extractions for '{COURSE_NUMBER}' are done. All detected images are saved as well.")
+    print(f"Extractions for course '{COURSE_NUMBER}' are done. All detected images are saved as well.")

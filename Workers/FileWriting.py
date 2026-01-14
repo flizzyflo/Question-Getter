@@ -84,7 +84,9 @@ class FileHandler:
 
         # for unique_question_code, question_and_answer in results.items():
         amount_before: int = questions_from_file.shape[0]
-        no_duplicate_questions: pd.DataFrame = questions_from_file.drop_duplicates(subset=["question", "answer"])
+        questions_from_file["key"] = questions_from_file["question"]+questions_from_file["answer"]
+        no_duplicate_questions: pd.DataFrame = questions_from_file.drop_duplicates(subset=["key"])
+        no_duplicate_questions = no_duplicate_questions.drop(columns=["key"])
         amount_after: int = no_duplicate_questions.shape[0]
         print(f"Dropped {amount_before - amount_after} duplicate questions.")
 

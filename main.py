@@ -1,7 +1,7 @@
 import os
-from pathlib import Path
-
 import requests
+
+from pathlib import Path
 from bs4 import BeautifulSoup, ResultSet
 
 from Workers.QuestionAnswerImageExtractor import QuestionAnswerImageExtractor
@@ -57,7 +57,7 @@ def extract_questions_for(*, attempt: int) -> dict[str, str]:
     raw_result = extractor.get_results()
 
     return raw_result
-    
+
 
 
 if __name__ == "__main__":
@@ -86,4 +86,4 @@ if __name__ == "__main__":
     FileHandler.filter_duplicates_from_stored_file(FILEPATH_FOR_CSV)
         
     print("-" * 20)
-    print(f"Extractions for course '{COURSE_NUMBER}' are done. All detected images are saved as well.")
+    print(f"Extractions for course '{COURSE_NUMBER}' are done.")

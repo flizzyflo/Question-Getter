@@ -6,7 +6,7 @@ import requests
 from pathlib import Path
 from bs4 import ResultSet, Tag
 from Settings.Settings import DELIMITER, COOKIES, HEADERS, PARAMS, QUESTION_ID
-from utils.space_scanner import find_formula_start_idx_in
+from utils.SpaceScanner import find_formula_start_idx_in
 
 
 class QuestionAnswerImageExtractor:

@@ -11,7 +11,9 @@ COURSES: Dict[int, List[int]] = {187091: [1088549, 1088798, 1088802, 1088804, 10
                                  187150: [1093957, 1094013, 1094017, 1094019, 1094022, 1094026, 1094028, 1094032, 1094034, 1094036, 1094040, 1094042, 1094043],
                                  187165: [1094045, 1094055, 1094058, 1094064, 1094071, 1094075, 1094080, 1094086, 1094091, 1094094, 1094097, 1094100],
                                  187177: [1094196, 1096706, 1096716, 1096718, 1096731, 1096748, 1096761, 1096767, 1096773, 1096778, 1096784, 1096787, 1096795, 1096804, 1096811],
-                                 187187: [1096838, ]}
+                                 187187: [1096838, 1096860, 1096869, 1096875, 1096887, 1096896, 1096901, 1096906, 1096914, 1096924, 1096928, 1096932, 1096932],
+                                 187197: [1096939, 1097044, 1097051, 1097064, 1097068, 1097072, 1097079, 1097083, 1097088, 1097090, 1097095, 1097099],
+                                 187212: [1100557, 1100759, 1100771, 1100780, 1100785, 1100789, 1100797, 1100798, 1100822, 1100826, 1100834]}
 
 COURSE_NAMES: Dict[int, str] = {187091: "Bayes-Klassifikation",
                                 187106: "Entscheidungswälder",
@@ -21,14 +23,16 @@ COURSE_NAMES: Dict[int, str] = {187091: "Bayes-Klassifikation",
                                 187150: "Anomalieerkennung",
                                 187165: "Hauptkomponentenanalyse",
                                 187177: "Markov Entscheidungsprozesse",
-                                187187: "Passives Reinforcement Learning"}
+                                187187: "Passives Reinforcement Learning",
+                                187197: "Aktives Reinforcement Learning",
+                                187212: "Künstliche Neuronale Netzwerke"}
 
 URL: str = "https://moodle.fernuni-hagen.de/mod/quiz/review.php"
 
-COURSE_NUMBER: int = 187177
+COURSE_NUMBER: int = 187212
 
 # aus cookies im browser
-COOKIES: Dict[str, str] = {"MoodleSession": "ljshps588r0hi6kba2v85jlv6c",
+COOKIES: Dict[str, str] = {"MoodleSession": "mq4qme29uodl2jemu6m071iuhd",
                            "MDL_SSP_SessID": "c7fd86140d34082734cc193fdbbdf0dd"}
 
 HEADERS: Dict[str, str] = {"User-Agent": "Mozilla/5.0",

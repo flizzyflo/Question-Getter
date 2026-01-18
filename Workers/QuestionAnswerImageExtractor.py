@@ -1,6 +1,6 @@
 import os
 import re
-from typing import List
+from typing import List, Dict
 
 import requests
 from pathlib import Path
@@ -111,6 +111,7 @@ class QuestionAnswerImageExtractor:
         as well as mapping the images to the questions as well.
         """
         global QUESTION_ID
+
         selection_div: Tag
 
         for selection_div in self.get_question_divs():
@@ -124,7 +125,7 @@ class QuestionAnswerImageExtractor:
 
 
 
-    def __extract_questions(self, html_element_to_download: str = "img") -> None:
+    def __extract_questions(self, _debug: bool = False) -> None:
         """
         Takes in all extracted question divs and extracts the questions out of them. 
         If an image is stored within the question div, this information is passed on to a helper mehtod which  will store the image as well.
@@ -135,44 +136,43 @@ class QuestionAnswerImageExtractor:
             html_element_to_download (str): Element to look for which should be downloaded
         """
 
-        # questions start with introduction text and question number. is filtered with this regex
-        # format looks like [KE01:054b], whereas the last letter - b in this case - is optional
         selection_div: ResultSet
-        unique_question_code_pattern: str = r"(Fragetext\[[A-Z]{2}\d{2}:\d{3}[a-z]{0,1}\])"
         formula_contents: List[str] = list()
+        question_code_formula_mapping: Dict[str, List[str]] = dict()
 
         for question_number, selection_div in enumerate(self.get_question_divs(), 1):
 
             question_text: str = selection_div.text
-            q = selection_div.get_text()
             #
             formula_spans = selection_div.contents[2].find_all("span", class_="MathJax_Preview")
 
+            # extract formula if found any spans for mathjax formula
             if len(formula_spans) > 0:
                 formula_contents = [sp.find("img").get("alt") for sp in formula_spans]
 
-
             irrelevant_intro_text = len("Fragetext")
             irrelevant_outro_text = len(f"Frage {question_number} AntwortRichtig Keine Antwort Falsch")
-            ### commentent
-            # irrelevant_intro_text: int = re.match(pattern=unique_question_code_pattern, string=question_text).span()[1] # grab lenght of the text to be eliminated
-            
+
             # question text with  unnecessary leading introductary text removed
             question_text = question_text[irrelevant_intro_text:]
             question_text = question_text[:len(question_text) - irrelevant_outro_text - 4]
 
+            # if formula_contents:
+            #     formula_start_indices: List[int] = find_formula_start_idx_in(question_text)
+            #     former_formula_length: int = 0
+            #     for formula_start_idx, formula_content in zip(formula_start_indices, formula_contents):
+            #         first_part_of_string = question_text[:formula_start_idx + former_formula_length].strip()
+            #         second_part_of_string = question_text[formula_start_idx + former_formula_length:].lstrip()
+            #         question_text = f"{first_part_of_string} {formula_content} {second_part_of_string}"
+            #         former_formula_length += len(formula_content)
+            #     if _debug:
+            #         question_code_formula_mapping[question_text] = formula_contents
+            #         print(question_code_formula_mapping)
+
             if formula_contents:
-                formula_start_indices: List[int] = find_formula_start_idx_in(question_text)
-                former_formula_length: int = 0
-                for formula_start_idx, formula_content in zip(formula_start_indices, formula_contents):
-                    first_part_of_string = question_text[:formula_start_idx + former_formula_length].strip()
-                    second_part_of_string = question_text[formula_start_idx + former_formula_length:].lstrip()
-                    question_text = f"{first_part_of_string} {formula_content} {second_part_of_string}"
-                    former_formula_length += len(formula_content)
+                question_text = self.__insert_formula_into(question_text=question_text,
+                                                           _debug=False)
                 formula_contents.clear()
-            # image is within the current div, needs to be extracted
-          #  if selection_div.find(html_element_to_download):
-          #      self.__extract_and_store_image(selection_div)
 
             # replace delimiter to ensure correct csv creation. replace other unnecessary text as well
             question_text = question_text.replace(DELIMITER, ":").replace("__________", "").strip()
@@ -304,4 +304,25 @@ class QuestionAnswerImageExtractor:
             self._results[current_question_code] = f"{current_question}{DELIMITER} {current_answer}"
 
 
+    def __insert_formula_into(self, *, question_text: str, _debug: bool = False) -> str:
 
+        question_code_formula_mapping: Dict[str, List[str]] = dict()
+        formula_contents: List[str] = list()
+
+        formula_start_indices: List[int] = find_formula_start_idx_in(question_text)
+        former_formula_length: int = 0 # relevant, since string extends after formula insertion
+
+        for formula_start_idx, formula_content in zip(formula_start_indices, formula_contents):
+            first_part_of_string = question_text[:formula_start_idx + former_formula_length].strip()
+            second_part_of_string = question_text[formula_start_idx + former_formula_length:].lstrip()
+            question_text = f"{first_part_of_string} {formula_content} {second_part_of_string}"
+            former_formula_length += len(formula_content)
+
+        # prints question text and formula content for question, since sometimes its not matched correct
+        if _debug:
+            question_code_formula_mapping[question_text] = formula_contents
+            print(question_code_formula_mapping)
+
+        formula_contents.clear()
+
+        return question_text

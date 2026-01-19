@@ -13,7 +13,8 @@ COURSES: Dict[int, List[int]] = {187091: [1088549, 1088798, 1088802, 1088804, 10
                                  187177: [1094196, 1096706, 1096716, 1096718, 1096731, 1096748, 1096761, 1096767, 1096773, 1096778, 1096784, 1096787, 1096795, 1096804, 1096811],
                                  187187: [1096838, 1096860, 1096869, 1096875, 1096887, 1096896, 1096901, 1096906, 1096914, 1096924, 1096928, 1096932, 1096932],
                                  187197: [1096939, 1097044, 1097051, 1097064, 1097068, 1097072, 1097079, 1097083, 1097088, 1097090, 1097095, 1097099],
-                                 187212: [1100557, 1100759, 1100771, 1100780, 1100785, 1100789, 1100797, 1100798, 1100822, 1100826, 1100834]}
+                                 187212: [1100557, 1100759, 1100771, 1100780, 1100785, 1100789, 1100797, 1100798, 1100822, 1100826, 1100834],
+                                 187224: [1100558, 1102677, 1102712, 1102719, 1102726, 1102742, ]}
 
 COURSE_NAMES: Dict[int, str] = {187091: "Bayes-Klassifikation",
                                 187106: "Entscheidungswälder",
@@ -25,15 +26,16 @@ COURSE_NAMES: Dict[int, str] = {187091: "Bayes-Klassifikation",
                                 187177: "Markov Entscheidungsprozesse",
                                 187187: "Passives Reinforcement Learning",
                                 187197: "Aktives Reinforcement Learning",
-                                187212: "Künstliche Neuronale Netzwerke"}
+                                187212: "Künstliche Neuronale Netzwerke",
+                                187224: "Convulutional Network"}
 
 URL: str = "https://moodle.fernuni-hagen.de/mod/quiz/review.php"
 
 COURSE_NUMBER: int = 187212
 
 # aus cookies im browser
-COOKIES: Dict[str, str] = {"MoodleSession": "mq4qme29uodl2jemu6m071iuhd",
-                           "MDL_SSP_SessID": "c7fd86140d34082734cc193fdbbdf0dd"}
+COOKIES: Dict[str, str] = {"MoodleSession": "k70su8t44p705n2ql6iuv32ggu",
+                           "MDL_SSP_SessID": "8b2996fd46cc71edae9ee6735507e2bb"}
 
 HEADERS: Dict[str, str] = {"User-Agent": "Mozilla/5.0",
     "Accept": "text/html"}

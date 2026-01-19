@@ -1,5 +1,4 @@
 import os
-import re
 from typing import List, Dict
 
 import requests
@@ -7,6 +6,14 @@ from pathlib import Path
 from bs4 import ResultSet, Tag
 from Settings.Settings import DELIMITER, COOKIES, HEADERS, PARAMS, QUESTION_ID
 from utils.SpaceScanner import find_formula_start_idx_in
+import logging
+
+logger = logging.getLogger(__name__)
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
 
 
 class QuestionAnswerImageExtractor:
@@ -69,7 +76,7 @@ class QuestionAnswerImageExtractor:
         return self._questions
 
 
-    def get_correct_answer(self, index: int) -> list[str]:
+    def get_correct_answer(self, index: int) -> str:
         return self._correct_answers[index]
 
 
@@ -157,20 +164,9 @@ class QuestionAnswerImageExtractor:
             question_text = question_text[irrelevant_intro_text:]
             question_text = question_text[:len(question_text) - irrelevant_outro_text - 4]
 
-            # if formula_contents:
-            #     formula_start_indices: List[int] = find_formula_start_idx_in(question_text)
-            #     former_formula_length: int = 0
-            #     for formula_start_idx, formula_content in zip(formula_start_indices, formula_contents):
-            #         first_part_of_string = question_text[:formula_start_idx + former_formula_length].strip()
-            #         second_part_of_string = question_text[formula_start_idx + former_formula_length:].lstrip()
-            #         question_text = f"{first_part_of_string} {formula_content} {second_part_of_string}"
-            #         former_formula_length += len(formula_content)
-            #     if _debug:
-            #         question_code_formula_mapping[question_text] = formula_contents
-            #         print(question_code_formula_mapping)
-
             if formula_contents:
                 question_text = self.__insert_formula_into(question_text=question_text,
+                                                           formula_contents=formula_contents,
                                                            _debug=False)
                 formula_contents.clear()
 
@@ -304,15 +300,44 @@ class QuestionAnswerImageExtractor:
             self._results[current_question_code] = f"{current_question}{DELIMITER} {current_answer}"
 
 
-    def __insert_formula_into(self, *, question_text: str, _debug: bool = False) -> str:
+    def __insert_formula_into(self, *, question_text: str, formula_contents: List[str], _debug: bool = True) -> str:
+        """
+        Inserts extracted formula strings back into a given question text at their
+        corresponding positions.
 
-        question_code_formula_mapping: Dict[str, List[str]] = dict()
-        formula_contents: List[str] = list()
+        The method identifies the start indices of formulas within the question
+        text, then reinserts the extracted formula contents at the appropriate
+        locations. Since inserting text changes the overall string length, an
+        offset (`former_formula_length`) is tracked to ensure correct placement
+        of subsequent formulas.
+
+        Optionally, debug information can be printed, showing the final question
+        text mapped to its inserted formulas.
+
+        Args:
+            question_text (str):
+                The original question text in which formulas should be inserted.
+
+            _debug (bool, optional):
+                If set to True, prints a mapping of the processed question text
+                to the list of inserted formulas for debugging purposes.
+                Defaults to False.
+
+        Returns:
+            str:
+                The modified question text with all formulas inserted at their
+                respective positions.
+
+        Side Effects:
+            - Prints debug information when `_debug` is enabled.
+            - Modifies internal temporary data structures during processing.
+        """
 
         formula_start_indices: List[int] = find_formula_start_idx_in(question_text)
         former_formula_length: int = 0 # relevant, since string extends after formula insertion
 
         for formula_start_idx, formula_content in zip(formula_start_indices, formula_contents):
+
             first_part_of_string = question_text[:formula_start_idx + former_formula_length].strip()
             second_part_of_string = question_text[formula_start_idx + former_formula_length:].lstrip()
             question_text = f"{first_part_of_string} {formula_content} {second_part_of_string}"
@@ -320,9 +345,8 @@ class QuestionAnswerImageExtractor:
 
         # prints question text and formula content for question, since sometimes its not matched correct
         if _debug:
-            question_code_formula_mapping[question_text] = formula_contents
-            print(question_code_formula_mapping)
+            logger.debug("Question: %s", question_text)
+            logger.debug("Formulas: %s", formula_contents)
 
-        formula_contents.clear()
 
         return question_text

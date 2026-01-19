@@ -9,7 +9,6 @@ from utils.AttemptExtractor import get_questions_for
 if __name__ == "__main__":
 
     get_questions_for(course_number=CURRENT_COURSE_NUMBER)
-
     print("-" * 20)
     FileHandler.filter_duplicates_from_stored_file(FILEPATH_FOR_CSV)
     print("-" * 20)

@@ -1,6 +1,7 @@
+import os
+
 from typing import Dict, List
 from pathlib import Path
-import os
 
 # cmid: List[attempts] -> beides aus URL entnommen
 COURSES: Dict[int, List[int]] = {187091: [1088549, 1088798, 1088802, 1088804, 1088809, 1088816, 1088822, 1088825, 1088830, 1088838, 1088842, 1088845, 1088850, 1088855, 1088859, 1088541],
@@ -15,7 +16,7 @@ COURSES: Dict[int, List[int]] = {187091: [1088549, 1088798, 1088802, 1088804, 10
                                  187197: [1096939, 1097044, 1097051, 1097064, 1097068, 1097072, 1097079, 1097083, 1097088, 1097090, 1097095, 1097099],
                                  187212: [1100557, 1100759, 1100771, 1100780, 1100785, 1100789, 1100797, 1100798, 1100822, 1100826, 1100834],
                                  187224: [1100558, 1102677, 1102712, 1102719, 1102726, 1102742, 1102760, 1102765, 1102771, 1102774, 1102776, 1102779],
-                                 187234: [1102780, 1102948, 1102953, 1102955, ],
+                                 187234: [1102780, 1102948, 1102953, 1102955, 1102977, 1102990, 1103002, 1103023, 1103038, 1103050, 1103059, 1103075],
                                  187242: []}
 
 COURSE_NAMES: Dict[int, str] = {187091: "Bayes-Klassifikation",
@@ -35,7 +36,7 @@ COURSE_NAMES: Dict[int, str] = {187091: "Bayes-Klassifikation",
 
 BASE_URL: str = "https://moodle.fernuni-hagen.de/mod/quiz/review.php"
 
-CURRENT_COURSE_NUMBER: int = 187224
+CURRENT_COURSE_NUMBER: int = 187234
 
 # aus cookies im browser
 COOKIES: Dict[str, str] = {"MoodleSession": "k70su8t44p705n2ql6iuv32ggu",

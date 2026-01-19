@@ -2,7 +2,7 @@ from typing import Union, Dict
 
 import requests
 
-from Settings.Settings import PARAMS, URL, COOKIES, HEADERS, IMAGE_FILE_PATH
+from Settings.Settings import PARAMS, BASE_URL, COOKIES, HEADERS, IMAGE_FILE_PATH
 from Workers.QuestionAnswerImageExtractor import QuestionAnswerImageExtractor
 from utils.HtmlScraper import get_relevant_html
 
@@ -20,13 +20,13 @@ def extract_questions_for(*, current_attempt: int) -> Union[Dict[str, str], None
     """
 
     PARAMS['attempt'] = current_attempt
-    current_response = requests.get(URL,
+    current_response = requests.get(BASE_URL,
                                     cookies=COOKIES,
                                     headers=HEADERS,
                                     params=PARAMS)
 
     if not current_response.status_code == 200:
-        print(f"Could not connecto to {URL} for attempt {current_attempt} - request is aborted. HTTP Answer-Statuscode: {current_response.status_code}")
+        print(f"Could not connecto to {BASE_URL} for attempt {current_attempt} - request is aborted. HTTP Answer-Statuscode: {current_response.status_code}")
         return None
 
     else:

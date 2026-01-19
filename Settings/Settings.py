@@ -14,7 +14,9 @@ COURSES: Dict[int, List[int]] = {187091: [1088549, 1088798, 1088802, 1088804, 10
                                  187187: [1096838, 1096860, 1096869, 1096875, 1096887, 1096896, 1096901, 1096906, 1096914, 1096924, 1096928, 1096932, 1096932],
                                  187197: [1096939, 1097044, 1097051, 1097064, 1097068, 1097072, 1097079, 1097083, 1097088, 1097090, 1097095, 1097099],
                                  187212: [1100557, 1100759, 1100771, 1100780, 1100785, 1100789, 1100797, 1100798, 1100822, 1100826, 1100834],
-                                 187224: [1100558, 1102677, 1102712, 1102719, 1102726, 1102742, ]}
+                                 187224: [1100558, 1102677, 1102712, 1102719, 1102726, 1102742, 1102760, 1102765, 1102771, 1102774, 1102776, 1102779],
+                                 187234: [1102780, 1102948, 1102953, 1102955, ],
+                                 187242: []}
 
 COURSE_NAMES: Dict[int, str] = {187091: "Bayes-Klassifikation",
                                 187106: "Entscheidungswälder",
@@ -27,22 +29,24 @@ COURSE_NAMES: Dict[int, str] = {187091: "Bayes-Klassifikation",
                                 187187: "Passives Reinforcement Learning",
                                 187197: "Aktives Reinforcement Learning",
                                 187212: "Künstliche Neuronale Netzwerke",
-                                187224: "Convulutional Network"}
+                                187224: "Convulutional Network",
+                                187234: "Rekurrente Neuronale Netzwerke",
+                                187242: "Lernen von Repräsentationen"}
 
-URL: str = "https://moodle.fernuni-hagen.de/mod/quiz/review.php"
+BASE_URL: str = "https://moodle.fernuni-hagen.de/mod/quiz/review.php"
 
-COURSE_NUMBER: int = 187212
+CURRENT_COURSE_NUMBER: int = 187224
 
 # aus cookies im browser
 COOKIES: Dict[str, str] = {"MoodleSession": "k70su8t44p705n2ql6iuv32ggu",
                            "MDL_SSP_SessID": "8b2996fd46cc71edae9ee6735507e2bb"}
 
 HEADERS: Dict[str, str] = {"User-Agent": "Mozilla/5.0",
-    "Accept": "text/html"}
+                           "Accept": "text/html"}
 
 PARAMS: Dict[str, int] = {"attempt": 0}
 CSV_FILE_PATH: Path = Path(f"questions.csv")
 IMAGE_FILE_PATH: Path = Path("/images")
-FILEPATH_FOR_CSV=Path(f"results{os.sep}{COURSE_NAMES[COURSE_NUMBER]}_{CSV_FILE_PATH}")
+FILEPATH_FOR_CSV=Path(f"results{os.sep}{COURSE_NAMES[CURRENT_COURSE_NUMBER]}_{CSV_FILE_PATH}")
 DELIMITER: str = ";"
 QUESTION_ID: int = 1

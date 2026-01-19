@@ -1,6 +1,6 @@
-import string
+
 from enum import StrEnum
-from typing import List
+from typing import List, Literal
 
 
 class STATES(StrEnum):
@@ -13,20 +13,19 @@ class STATES(StrEnum):
 
 def find_formula_start_idx_in(input_string: str) -> List[int]:
 
-    def move(input_string, current_idx: int) -> str:
-        return input_string[current_idx]
+    def move(inp_str: str, current_idx: int) -> str:
+        return inp_str[current_idx]
 
     current_letter: str
     left_pos: int = 0
     EOL: int = len(input_string)
-    STATE = STATES.START
+    STATE: Literal[STATES] = STATES.START
     indices: List[int] = list()
 
     while STATE != STATES.EOL:
 
         if left_pos >= EOL or left_pos + 1 >= EOL:
             STATE = STATES.EOL
-
 
         elif STATE == STATES.START:
             current_letter = move(input_string, left_pos)

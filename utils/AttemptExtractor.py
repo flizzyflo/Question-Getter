@@ -1,6 +1,6 @@
 from typing import List
 
-from Settings.Settings import COURSES, COURSE_NUMBER, FILEPATH_FOR_CSV
+from Settings.Settings import COURSES, CURRENT_COURSE_NUMBER, FILEPATH_FOR_CSV
 from Workers.FileWriting import FileHandler
 from utils.ResultExtractor import extract_questions_for
 
